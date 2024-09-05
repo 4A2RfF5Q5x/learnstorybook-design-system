@@ -13,13 +13,19 @@ jobs:
         run: yarn
       - name: Install Playwright
         run: npx playwright install --with-deps
+      - name: Verify Playwright installation
+        run: npx playwright --version
       - name: Build Storybook
         run: yarn build-storybook --quiet
+      - name: Debug - List files
+        run: ls -R
+      - name: Debug - Storybook build output
+        run: cat storybook-static/index.html
       - name: Serve Storybook and run tests
         run: |
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \ 
-          npx http-server storybook-static --port 6006 --silent \ 
-          npx wait-on tcp:6006 && yarn test-storybook
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --port 6006 --silent" \
+            "npx wait-on tcp:6006 && yarn test-storybook"
   visual-tests:
     runs-on: ubuntu-latest
     steps:
